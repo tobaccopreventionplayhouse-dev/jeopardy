@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tobacco Jeopardy | Challenge What You Know</title>
+<style>
+:root{--navy:#101b49;--blue:#193b91;--gold:#ffd34e;--ink:#14213d;--paper:#f3f6fc;--white:#fff;--green:#16845b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#284caa 0,#101b49 55%,#080f2b 100%);font-family:Arial,Helvetica,sans-serif;color:var(--white);min-height:100vh}
+header{text-align:center;padding:22px 16px 12px}h1{font-size:clamp(2rem,5vw,3.5rem);margin:0;color:var(--gold);letter-spacing:2px;text-shadow:0 3px 0 #7d4e00}header p{margin:8px 0 0;color:#e4eaff;font-size:1rem}
+.wrap{max-width:1450px;margin:auto;padding:12px 18px 34px}
+.mode-tools{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0 12px}.player-count{display:none;align-items:center;gap:8px;background:var(--gold);color:#241b00;padding:7px 12px;border-radius:9px;font-weight:700}.player-count select{font:inherit;border:1px solid #aebbd6;border-radius:6px;padding:5px;background:#fff;color:var(--ink)}.mode-tools button.active{background:var(--gold);color:#241b00;outline:3px solid #fff5c4}#individualMode,#individualMode.active{background:#fff;color:var(--ink)}.scorebar{display:flex;gap:12px;justify-content:center;align-items:stretch;flex-wrap:wrap;margin:12px auto 18px}
+.team{background:#fff;color:var(--ink);border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 5px 0 #09102c;min-width:220px}
+.team input{border:0;border-bottom:2px solid #ccd5e9;font-size:1rem;font-weight:bold;width:115px;min-width:0;padding:5px;color:var(--ink)}
+.score{font-size:1.65rem;font-weight:800;color:var(--blue);min-width:48px;text-align:center}
+.controls{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+button{cursor:pointer;border:0;border-radius:9px;padding:10px 14px;font-weight:700;font-size:.95rem}
+.secondary{background:#e7edff;color:#15265d}.gold{background:var(--gold);color:#241b00}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.category{background:#09143c;border:2px solid #506bb7;border-radius:10px;min-height:82px;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;color:#fff;font-size:clamp(.72rem,1.35vw,1.05rem)}
+.cell{background:linear-gradient(145deg,#2455c5,#153887);border:2px solid #7797ef;border-radius:10px;min-height:100px;color:var(--gold);font-weight:900;font-size:clamp(1.55rem,3vw,2.3rem);text-shadow:0 2px 0 #0b1c50;box-shadow:0 4px 0 #080f2b;transition:.15s}
+.cell:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.15)}.cell:disabled{background:#26345b;color:#8190b5;border-color:#39476c;box-shadow:none;cursor:default;text-decoration:line-through}
+.facilitator-tools{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
+#facilitatorGuide{display:none;background:#fff;color:#14213d;border-radius:14px;padding:20px;margin:0 0 20px}
+#facilitatorGuide.open{display:block}
+.guide-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:2px solid #d9e1f2;padding-bottom:12px;margin-bottom:14px}
+.guide-head h2{margin:0;color:#142b68}
+.guide-category{margin:20px 0 8px;color:#173b91;border-bottom:2px solid #dbe4f6;padding-bottom:6px}
+.guide-item{border:1px solid #dce3ef;border-radius:9px;padding:12px;margin:9px 0;break-inside:avoid}
+.guide-meta{font-weight:900;color:#765300;margin-bottom:6px}
+.guide-q{font-weight:700;margin-bottom:6px}
+.guide-a{line-height:1.45}
+.guide-source{font-size:.82rem;color:#35599a;overflow-wrap:anywhere;margin-top:5px}
+@media print{
+ @page{size:letter;margin:.55in}
+ body{background:#fff!important;color:#111!important}
+ header,.scorebar,#turn,#board,.note,footer,.facilitator-tools,.modal{display:none!important}
+ .wrap{max-width:none;padding:0;margin:0}
+ #facilitatorGuide{display:block!important;padding:0;margin:0;border-radius:0}
+ .guide-head h2{color:#111}
+ .guide-item{border:1px solid #aaa;padding:9px;margin:7px 0}
+ .guide-category{color:#111;border-color:#777;break-after:avoid-page;page-break-after:avoid}
+ .guide-category + .guide-item{break-before:avoid-page;page-break-before:avoid}
+ .guide-source{color:#333}
+}
+.note{max-width:980px;margin:22px auto 0;padding:18px 22px;text-align:left;color:#fff;font-size:1.08rem;line-height:1.5;background:rgba(7,16,48,.62);border:1px solid #506bb7;border-radius:12px}.note h2{margin:0 0 10px;text-align:center;color:var(--gold);font-size:1.45rem}.note p{margin:8px 0}
+.modal{position:fixed;inset:0;background:#03091ddd;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.modal.show{display:flex}
+.dialog{width:min(850px,100%);max-height:92vh;overflow:auto;background:#fff;color:var(--ink);border-radius:18px;padding:clamp(20px,4vw,38px);box-shadow:0 20px 70px #0009;text-align:center;position:relative}
+.value{display:inline-block;background:#fff0bd;color:#6b4a00;padding:7px 15px;border-radius:99px;font-weight:900;margin-bottom:14px}
+.question{font-size:clamp(1.35rem,3vw,2.25rem);line-height:1.3;font-weight:800;margin:5px auto 20px}
+.answer{display:none;background:#eaf7f0;border-left:5px solid var(--green);padding:16px;border-radius:10px;text-align:left;margin:16px 0;font-size:1.08rem;line-height:1.5}
+.answer.show{display:block}.answer strong{color:#075d3c}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.source{display:block;text-align:left;color:#3c5c9f;font-size:.9rem;margin-top:15px;overflow-wrap:anywhere}
+.close{position:absolute;right:14px;top:12px;background:#edf1fa;color:#26365e;padding:8px 12px}
+footer{text-align:center;color:#cbd7ff;font-size:.83rem;line-height:1.5;margin:24px auto 0;max-width:900px}
+@media(max-width:760px){.wrap{padding:8px}.board{gap:5px}.category{min-height:72px;padding:5px;font-size:.62rem;overflow-wrap:anywhere}.cell{min-height:75px;font-size:1.35rem}.team{min-width:155px;justify-content:space-between}.team input{width:82px}.scorebar{gap:7px}}
+@media(max-width:430px){.category{font-size:.55rem}.cell{min-height:66px;font-size:1.1rem}.team{padding:8px}.team input{width:70px}}
+</style>
+</head>
+<body>
+<header><h1>TOBACCO JEOPARDY</h1><p>Challenge what you know. Discover the facts. Separate myths from science.</p></header>
+<main class="wrap">
+ <div class="facilitator-tools">
+  <button class="gold" onclick="toggleGuide()">View Question &amp; Answer Bank</button>
+  <button class="secondary" onclick="printGuide()">Print Question &amp; Answer Bank</button>
+ </div>
+ <section id="facilitatorGuide" aria-label="Printable questions and answers">
+  <div class="guide-head"><h2>Tobacco Jeopardy — Questions &amp; Answers</h2><div><strong>25 clues</strong> · 5 categories · $100–$500</div></div>
+  <p><strong>How to use:</strong> Select the matching category and dollar amount on the game board. Read the clue to players. Use the answer below to confirm responses. Award the listed points to the team or individual player who answers correctly. The source link is provided for facilitator reference and fact-checking.</p>
+  <div id="guideContent"></div>
+ </section>
+ <div class="mode-tools" aria-label="Choose game mode"><button id="teamMode" class="gold active" onclick="setMode('teams')">Play in Teams</button><button id="individualMode" class="secondary" onclick="setMode('individual')">Play Individually</button><label class="player-count" id="teamCountWrap">Pick number of teams <select id="teamCount" aria-label="Number of teams" onchange="changeTeamCount(this.value)"><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label><label class="player-count" id="playerCountWrap">Pick number of players <select id="playerCount" aria-label="Number of individual players" onchange="changePlayerCount(this.value)"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label></div>
+ <section class="scorebar" id="scorebar">
+  <div class="team"><input aria-label="Team one name" value="Team 1" id="name1"><span class="score" id="score1">0</span></div>
+  <div class="team"><input aria-label="Team two name" value="Team 2" id="name2"><span class="score" id="score2">0</span></div>
+  <div class="controls"><button class="secondary" onclick="resetGame()">Reset Game</button><button class="gold" onclick="switchTurn()">Switch Turn</button></div>
+ </section>
+ <div id="turn" style="text-align:center;color:#ffe28a;font-weight:bold;margin:0 0 12px">Current turn: Team 1</div>
+ <section class="board" id="board" aria-label="Jeopardy game board"></section>
+ <section class="note" aria-label="How to play">
+  <h2>How to Play</h2>
+  <p class="step-one"><strong>1. Choose how you want to play:</strong> The facilitator clicks the <strong>“Play in Teams”</strong> or <strong>“Play Individually”</strong> button and picks the team or player count. The facilitator also clicks the <strong>“View Question &amp; Answer Bank”</strong> button to view or <strong>“Print Question &amp; Answer Bank”</strong> button to print questions and answers, then uses this bank to confirm answers provided in the game.</p>
+  <p><strong>2. Choose a dollar amount:</strong> The player or team whose turn it is chooses an available dollar amount on the game board ($100, $200, $300, $400, or $500). The facilitator then clicks that dollar amount on the game board to open and reveal the clue, reads it aloud, and uses the Question &amp; Answer Bank to check the correct answer.</p>
+  <p><strong>3. Answer the clue and award points:</strong> Any player or team may call out an answer. Once someone responds, the facilitator clicks the <strong>“Reveal Answer”</strong> button, then clicks the button for the applicable player or team in the clue box to award them the points for a correct answer. That player or team then chooses the next dollar amount.</p>
+  <p><strong>4. Continue playing:</strong> If no one knows the answer, the facilitator can reveal it without awarding points, and play continues with another dollar amount. The player or team with the most money at the end wins. The facilitator can end the game after a preferred amount of time or when all dollar amounts are picked.</p>
+  <p><strong>Note:</strong> Player or team names can be changed by clicking the name box for each player or team and entering a new name.</p>
+ </section>
+ <footer>Educational activity. Facts are based on public-health and scientific sources. Select “View source” on each clue to explore the research behind the answer.</footer>
+</main>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="question">
+ <div class="dialog">
+  <button class="close" onclick="closeModal()">✕ Close</button>
+  <div class="value" id="value"></div>
+  <div class="question" id="question"></div>
+  <div class="answer" id="answer"></div>
+  <a class="source" id="source" target="_blank" rel="noopener">View research source ↗</a>
+  <div class="actions">
+   <button class="gold" id="reveal" onclick="revealAnswer()">Reveal Answer</button>
+   <div id="awardButtons" class="actions" style="margin-top:0"><button class="secondary" onclick="award(1)">Team 1 correct + points</button><button class="secondary" onclick="award(2)">Team 2 correct + points</button></div>
+   <button class="secondary" onclick="closeModal()">Done</button>
+  </div>
+ </div>
+</div>
+<script>
+const categories=[
+ {name:"Beyond the Lungs",clues:[
+ ["Smoking & Diabetes","People who smoke have what percentage higher risk of developing type 2 diabetes compared with people who do not smoke?","About 30% to 40% higher risk. Nicotine can raise blood sugar, while smoke-related inflammation can make it harder for the body to regulate blood sugar.","https://www.cdc.gov/diabetes/risk-factors/diabetes-and-smoking.html"],
+ ["Heart & Blood Vessels","What gas in cigarette smoke reduces the blood’s ability to carry oxygen by binding to hemoglobin?","Carbon monoxide. It binds to hemoglobin more readily than oxygen, reducing oxygen delivery to the body.","https://www.cdc.gov/tobacco/about/"],
+ ["Eyesight","Name one serious eye disease for which smoking increases risk.","Age-related macular degeneration (AMD) is one example. Smoking is a major modifiable risk factor for AMD.","https://www.nei.nih.gov/learn-about-eye-health/healthy-vision/health-benefits-quitting-smoking"],
+ ["Bones","Does smoking affect bone health and fracture healing?","Yes. Smoking can weaken bones and slow healing after fractures or surgery.","https://www.cdc.gov/tobacco/about/"],
+ ["Immune System","Smoking can impair the body’s ability to fight infection and affect which system that protects against disease?","The immune system. Tobacco smoke can weaken immune function and increase susceptibility to infections.","https://www.who.int/news-room/fact-sheets/detail/tobacco"]
+ ]},
+ {name:"Brain & Nicotine",clues:[
+ ["Fast Delivery","In cigarette smoking, nicotine can reach the brain in approximately how many seconds after inhalation?","About 10 seconds. Rapid delivery helps reinforce nicotine addiction.","https://www.fda.gov/tobacco-products/health-effects-tobacco-use/nicotine-why-tobacco-products-are-addictive"],
+ ["Brain Development","Why is nicotine especially concerning for teens and young adults?","The brain is still developing. Nicotine exposure can affect brain development, including attention, learning, mood, and impulse control.","https://www.cdc.gov/tobacco/e-cigarettes/health-effects.html"],
+ ["Reward System","Nicotine affects the brain’s reward pathway by increasing the activity of which chemical messenger associated with reward and reinforcement?","Dopamine. Nicotine triggers dopamine release, reinforcing the behavior and contributing to addiction.","https://nida.nih.gov/publications/research-reports/tobacco-nicotine-e-cigarettes/nicotine-addictive"],
+ ["Withdrawal","Name two common nicotine withdrawal symptoms.","Examples include irritability, anxiety, trouble concentrating, restlessness, sleep problems, and strong cravings.","https://www.cdc.gov/tobacco/campaign/tips/quit-smoking/guide/withdrawal.html"],
+ ["Nicotine vs. Smoke","True or false: Nicotine is the main chemical responsible for most smoking-related cancers and lung disease.","False. Nicotine is highly addictive, but the thousands of chemicals in tobacco smoke—including carcinogens—cause much of the serious disease and death associated with smoking.","https://www.fda.gov/tobacco-products/health-effects-tobacco-use/chemicals-tobacco-products-and-your-health"]
+ ]},
+ {name:"Hidden Health Risks",clues:[
+ ["Secondhand Smoke","Can secondhand smoke cause heart disease in adults who do not smoke?","Yes. Secondhand smoke can cause coronary heart disease, stroke, and lung cancer in nonsmokers.","https://www.cdc.gov/tobacco/secondhand-smoke/health.html"],
+ ["Pregnancy","Does smoking during pregnancy increase the risk of ectopic pregnancy, where a fertilized egg implants outside the uterus?","Yes. Smoking is associated with increased risk of ectopic pregnancy and other reproductive complications.","https://www.cdc.gov/tobacco/about/"],
+ ["Diabetes Complications","For someone who already has diabetes, smoking can worsen blood sugar control and increase the risk of what major complications? Name two.","Examples include heart disease, kidney disease, nerve damage, vision loss, and poor circulation that can lead to foot ulcers or amputation.","https://www.fda.gov/tobacco-products/health-effects-tobacco-use/how-smoking-can-increase-risk-and-affect-diabetes"],
+ ["Thirdhand Smoke","What is the term for toxic residue from tobacco smoke that remains on surfaces, clothing, furniture, and dust after the smoke has cleared?","Thirdhand smoke. Residue can persist indoors and expose people through contact or dust.","https://www.cancer.gov/about-cancer/causes-prevention/risk/substances/secondhand-smoke"],
+ ["Healing","Why can smoking increase the risk of complications after surgery?","Smoking reduces oxygen delivery and affects circulation and immune function, which can slow wound healing and increase complications.","https://www.who.int/news-room/fact-sheets/detail/tobacco"]
+ ]},
+ {name:"Tobacco Through Time",clues:[
+ ["A Turning Point","What year did the first U.S. Surgeon General’s report on smoking and health conclude that cigarette smoking causes lung cancer in men?","1964. The landmark report connected smoking with lung cancer and other serious diseases.","https://www.cdc.gov/tobacco-surgeon-general-reports/about/history.html"],
+ ["Mass Production","What late-19th-century invention helped make cigarette manufacturing much faster and contributed to the growth of mass-market cigarettes?","The automated cigarette-rolling machine, which greatly increased production speed and scale.","https://www.ncbi.nlm.nih.gov/books/NBK294301/"],
+ ["Filter Marketing","Were cigarette filters originally introduced as proof that cigarettes were safe, or marketed as a way to reduce exposure to harmful substances?","Filters were marketed as a way to reduce tar and nicotine yields. But filtered cigarettes are not safe; smoking still causes serious disease.","https://www.ncbi.nlm.nih.gov/books/NBK53013/"],
+ ["Industry Strategy","In the 1950s, what did major U.S. tobacco companies create to cast doubt on emerging research linking smoking to disease?","The Tobacco Industry Research Committee, a front group formed in 1953 that helped promote doubt about the growing scientific evidence.","https://iris.who.int/bitstream/handle/10665/381685/9789240112063-eng.pdf"],
+ ["Court-Ordered Truth","In 2017, why were major U.S. tobacco companies ordered to run corrective statements in ads and on websites?","A federal court required corrective statements about the dangers of smoking and secondhand smoke after finding the companies had deceived the public about the health effects of smoking.","https://www.justice.gov/archives/opa/pr/tobacco-companies-begin-issuing-court-ordered-statements-tobacco-racketeering-suit"]
+ ]},
+ {name:"Products & Chemicals",clues:[
+ ["Chemical Count","Approximately how many chemicals are found in cigarette smoke?","More than 7,000 chemicals. Many are toxic, and dozens are known to cause cancer.","https://www.fda.gov/tobacco-products/health-effects-tobacco-use/chemicals-tobacco-products-and-your-health"],
+ ["Hookah Myth","True or false: Water in a hookah filters out all harmful chemicals, making hookah smoke harmless.","False. Water does not make hookah smoke safe. Hookah users can be exposed to nicotine, carbon monoxide, and cancer-causing chemicals.","https://www.cdc.gov/tobacco/other-tobacco-products/hookahs.html"],
+ ["E-Cigarette Aerosol","Why is the cloud from an e-cigarette more accurately called an aerosol rather than harmless water vapor?","It can contain nicotine, tiny particles, metals, volatile organic compounds, and other potentially harmful substances—not just water.","https://www.cdc.gov/tobacco/e-cigarettes/health-effects.html"],
+ ["Cigarette Butts","What common piece of litter from cigarettes contains plastic-like cellulose acetate and can persist in the environment?","The cigarette filter, commonly discarded as a cigarette butt. Filters are not biodegradable in the way many people assume and can release toxic chemicals into the environment.","https://www.who.int/news-room/fact-sheets/detail/tobacco"],
+ ["Light & Mild","Are cigarettes labeled “light” or “mild” a safe or reliably less harmful option?","No. Those labels can mislead consumers. “Light” cigarettes do not reduce the health risks of smoking; people may compensate by inhaling more deeply or smoking more.","https://www.cancer.gov/about-cancer/causes-prevention/risk/tobacco/light-cigarettes-fact-sheet"]
+ ]}
+];
+let mode="teams",scores=[0,0],turn=1,current=null,used=new Set(),individualCount=4,teamCount=2;
+const roster={teams:Array.from({length:12},(_,i)=>`Team ${i+1}`)};
+const board=document.getElementById('board');
+function buildFacilitatorGuide(){
+ const target=document.getElementById('guideContent');
+ target.innerHTML='';
+ categories.forEach((cat,ci)=>{
+  const heading=document.createElement('h3');heading.className='guide-category';heading.textContent=cat.name;target.appendChild(heading);
+  cat.clues.forEach((clue,ri)=>{
+   const item=document.createElement('article');item.className='guide-item';
+   const meta=document.createElement('div');meta.className='guide-meta';meta.textContent='$'+((ri+1)*100)+' POINTS';
+   const q=document.createElement('div');q.className='guide-q';q.textContent=clue[0]+': '+clue[1];
+   const a=document.createElement('div');a.className='guide-a';a.textContent='ANSWER: '+clue[2];
+   const src=document.createElement('div');src.className='guide-source';
+   const link=document.createElement('a');link.href=clue[3];link.target='_blank';link.rel='noopener';link.textContent='Research source: '+clue[3];src.appendChild(link);
+   item.append(meta,q,a,src);target.appendChild(item);
+  });
+ });
+}
+function toggleGuide(){document.getElementById('facilitatorGuide').classList.toggle('open')}
+function printGuide(){
+ const guide=document.getElementById('facilitatorGuide');
+ const wasOpen=guide.classList.contains('open');guide.classList.add('open');
+ window.print();
+ if(!wasOpen)guide.classList.remove('open');
+}
+function buildBoard(){
+ board.innerHTML='';
+ categories.forEach((cat,ci)=>{
+  const h=document.createElement('div');h.className='category';h.textContent=cat.name;board.appendChild(h);
+ });
+ for(let ri=0;ri<5;ri++) categories.forEach((cat,ci)=>{
+  const b=document.createElement('button');b.className='cell';b.textContent='$'+((ri+1)*100);
+  b.setAttribute('aria-label',cat.name+' for '+((ri+1)*100)+' points');
+  const key=ci+'-'+ri;if(used.has(key))b.disabled=true;
+  b.onclick=()=>openClue(ci,ri,b);board.appendChild(b);
+ });
+}
+function openClue(ci,ri,btn){
+ current={ci,ri,points:(ri+1)*100,btn,key:ci+'-'+ri};
+ const c=categories[ci].clues[ri];
+ document.getElementById('value').textContent=categories[ci].name+' • '+current.points+' POINTS';
+ document.getElementById('question').textContent=c[0]+': '+c[1];
+ document.getElementById('answer').innerHTML='<strong>Correct response:</strong> '+c[2];
+ document.getElementById('answer').classList.remove('show');
+ document.getElementById('reveal').style.display='inline-block';
+ const a=document.getElementById('source');a.href=c[3];a.style.display='block';
+ document.getElementById('modal').classList.add('show');
+}
+function revealAnswer(){document.getElementById('answer').classList.add('show');document.getElementById('reveal').style.display='none'}
+function setMode(next){
+ if(mode===next)return;
+ mode=next;scores=mode==="teams"?Array(teamCount).fill(0):Array(individualCount).fill(0);turn=1;
+ document.getElementById('teamMode').classList.toggle('active',mode==='teams');
+ document.getElementById('individualMode').classList.toggle('active',mode==='individual');
+ document.getElementById('playerCountWrap').style.display=mode==='individual'?'inline-flex':'none';
+ document.getElementById('teamCountWrap').style.display=mode==='teams'?'inline-flex':'none';
+ renderScoreboard();updateTurn();
+}
+function changeTeamCount(value){
+ const names=[];
+ for(let i=1;i<=teamCount;i++){
+  const input=document.getElementById('name'+i);
+  names[i-1]=input?input.value:roster.teams[i-1];
+ }
+ names.forEach((name,i)=>{if(name)roster.teams[i]=name});
+ const nextCount=Math.max(2,Math.min(12,Number(value)||2));
+ const oldScores=scores.slice();teamCount=nextCount;
+ if(mode==='teams'){
+  scores=Array.from({length:teamCount},(_,i)=>oldScores[i]||0);
+  if(turn>teamCount)turn=1;
+  renderScoreboard();updateTurn();
+ }
+}
+function changePlayerCount(value){
+ const nextCount=Math.max(1,Math.min(12,Number(value)||4));
+ const oldScores=scores.slice();
+ individualCount=nextCount;
+ if(mode==='individual'){
+  scores=Array.from({length:individualCount},(_,i)=>oldScores[i]||0);
+  if(turn>individualCount)turn=1;
+  renderScoreboard();updateTurn();
+ }
+}
+function renderScoreboard(){
+ const bar=document.getElementById('scorebar');
+ const count=mode==='teams'?teamCount:individualCount;
+ let html='';
+ for(let i=1;i<=count;i++){
+  const defaultName=mode==='teams'?roster.teams[i-1]:('Player '+i);
+  html+=`<div class="team"><input aria-label="${mode==='teams'?'Team':'Player'} ${i} name" value="${defaultName}" id="name${i}"><span class="score" id="score${i}">${scores[i-1]||0}</span></div>`;
+ }
+ html+='<div class="controls"><button class="secondary" onclick="resetGame()">Reset Game</button><button class="gold" onclick="switchTurn()">Switch Turn</button></div>';
+ bar.innerHTML=html;
+ for(let i=1;i<=count;i++)document.getElementById('name'+i).addEventListener('input',()=>{if(mode==='teams')roster.teams[i-1]=document.getElementById('name'+i).value;if(turn===i)updateTurn()});
+ const awards=document.getElementById('awardButtons');
+ awards.innerHTML='';
+ for(let i=1;i<=count;i++){
+  const b=document.createElement('button');b.className='secondary';
+  b.textContent=(mode==='teams'?'Team ':'Player ')+i+' correct + points';b.onclick=()=>award(i);awards.appendChild(b);
+ }
+}
+function award(who){
+ if(!current)return;
+ scores[who-1]+=current.points;
+ document.getElementById('score'+who).textContent=scores[who-1];
+ used.add(current.key);current.btn.disabled=true;closeModal();switchTurn();
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');current=null}
+function updateTurn(){document.getElementById('turn').textContent='Current turn: '+document.getElementById('name'+turn).value}
+function switchTurn(){const count=mode==='teams'?teamCount:individualCount;turn=turn%count+1;updateTurn()}
+function resetGame(){
+ if(!confirm('Reset all clues and scores?'))return;
+ scores=mode==='teams'?Array(teamCount).fill(0):Array(individualCount).fill(0);turn=1;used.clear();renderScoreboard();updateTurn();closeModal();buildBoard();
+}
+renderScoreboard();document.getElementById('playerCountWrap').style.display='none';document.getElementById('teamCountWrap').style.display='inline-flex';updateTurn();buildBoard();
+buildFacilitatorGuide();
+</script>
+</body>
+</html>
